@@ -5,8 +5,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/wesen/ai-in-action-app/internal/domain"
-	"github.com/wesen/ai-in-action-app/internal/repository"
+	"github.com/go-go-golems/ai-in-action-app/internal/domain"
+	"github.com/go-go-golems/ai-in-action-app/internal/repository"
 )
 
 // MockEventRepository implements the EventRepository interface with in-memory storage

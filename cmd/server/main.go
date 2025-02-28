@@ -2,69 +2,52 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
-	"github.com/wesen/ai-in-action-app/internal/repository/mock"
+	"github.com/go-go-golems/ai-in-action-app/internal/handlers"
+	"github.com/go-go-golems/ai-in-action-app/internal/repository/mock"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 func main() {
-	// Create a context with timeout
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
 	// Initialize repositories
 	eventRepo := mock.NewMockEventRepository()
 	timerRepo := mock.NewMockTimerRepository()
 	noteRepo := mock.NewMockNoteRepository()
 	questionRepo := mock.NewMockQuestionRepository()
 
-	// Verify repositories are working
-	fmt.Println("=== AI in Action App ===")
+	// Initialize Echo
+	e := echo.New()
+	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
+	e.Static("/static", "static")
 
-	// Test event repository
-	fmt.Println("\nUpcoming Events:")
-	upcomingEvents, err := eventRepo.GetUpcomingEvents(ctx)
-	if err != nil {
-		log.Fatalf("Error getting upcoming events: %v", err)
-	}
-	for _, event := range upcomingEvents {
-		fmt.Printf("- %s by %s on %s\n", event.Title, event.Speaker, event.Date.Format("Jan 2, 2006"))
-	}
+	// Register handlers
+	handlers.RegisterHandlers(e, eventRepo, timerRepo, noteRepo, questionRepo)
 
-	fmt.Println("\nPast Events:")
-	pastEvents, err := eventRepo.GetPastEvents(ctx)
-	if err != nil {
-		log.Fatalf("Error getting past events: %v", err)
-	}
-	for _, event := range pastEvents {
-		fmt.Printf("- %s by %s on %s\n", event.Title, event.Speaker, event.Date.Format("Jan 2, 2006"))
-	}
+	// Start server in a goroutine
+	go func() {
+		if err := e.Start(":8080"); err != nil {
+			log.Printf("Server error: %v\n", err)
+		}
+	}()
 
-	// Test timer repository
-	timer, err := timerRepo.GetTimer(ctx)
-	if err != nil {
-		log.Fatalf("Error getting timer: %v", err)
-	}
-	fmt.Printf("\nTimer: %v remaining, running: %v\n", timer.RemainingTime, timer.IsRunning)
+	log.Println("Server started at http://localhost:8080")
 
-	// Test note repository
-	note, err := noteRepo.GetNote(ctx, 1)
-	if err != nil {
-		log.Fatalf("Error getting note: %v", err)
-	}
-	fmt.Printf("\nNote (Page %d/%d): %s\n", note.PageNumber, note.TotalPages, note.Content)
+	// Wait for interrupt signal to gracefully shut down the server
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
 
-	// Test question repository
-	fmt.Println("\nQuestions:")
-	questions, err := questionRepo.GetQuestions(ctx)
-	if err != nil {
-		log.Fatalf("Error getting questions: %v", err)
+	// Graceful shutdown
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	if err := e.Shutdown(ctx); err != nil {
+		log.Fatal(err)
 	}
-	if len(questions) == 0 {
-		fmt.Println("No questions submitted yet.")
-	}
-
-	log.Println("Repository setup complete!")
 }

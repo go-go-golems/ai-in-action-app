@@ -68,9 +68,14 @@ templ AddEventForm() {
 
 	<script>
 		function closeModal() {
-			const modal = bootstrap.Modal.getInstance(document.getElementById('add-event-modal'));
-			if (modal) {
-				modal.hide();
+			const modal = document.getElementById('add-event-modal');
+			const modalInstance = bootstrap.Modal.getInstance(modal);
+			if (modalInstance) {
+				modalInstance.hide();
+			} else {
+				// Fallback if the instance isn't available
+				const bsModal = new bootstrap.Modal(modal);
+				bsModal.hide();
 			}
 		}
 	</script>

@@ -1,0 +1,55 @@
+package components
+
+import (
+	"fmt"
+	"time"
+	"github.com/go-go-golems/ai-in-action-app/internal/domain"
+)
+
+// EventCard renders a single event card
+templ EventCard(event domain.Event) {
+	<div class="card mb-3">
+		<div class="card-body">
+			<div class="d-flex justify-content-between align-items-start">
+				<h5 class="card-title">{ event.Title }</h5>
+				<span class="badge bg-light text-dark">{ formatDate(event.Date) }</span>
+			</div>
+			<h6 class="card-subtitle mb-2 text-muted">{ event.Speaker }</h6>
+			<p class="card-text">{ event.Description }</p>
+		</div>
+	</div>
+}
+
+// EventList renders a list of events with a title
+templ EventList(title string, events []domain.Event, showAddButton bool) {
+	<div class="mb-4">
+		<div class="d-flex justify-content-between align-items-center mb-3">
+			<h2>{ title }</h2>
+			if showAddButton {
+				<button 
+					class="btn btn-primary" 
+					hx-get="/events/add-form" 
+					hx-target="#add-event-modal-content" 
+					hx-trigger="click"
+					data-bs-toggle="modal" 
+					data-bs-target="#add-event-modal"
+				>
+					Add Event
+				</button>
+			}
+		</div>
+		
+		if len(events) == 0 {
+			<p class="text-muted">No events to display.</p>
+		} else {
+			for _, event := range events {
+				@EventCard(event)
+			}
+		}
+	</div>
+}
+
+// Helper function to format date
+func formatDate(date time.Time) string {
+	return fmt.Sprintf("%s, %s", date.Format("Monday"), date.Format("Jan 2, 2006"))
+} 

@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/wesen/ai-in-action-app/internal/domain"
+	"github.com/go-go-golems/ai-in-action-app/internal/domain"
 )
 
 // EventRepository defines the interface for event data operations

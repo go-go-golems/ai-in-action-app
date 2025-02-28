@@ -41,3 +41,12 @@ Optimized HTMX updates to only refresh the content area without reloading the na
 - Created a new `TimelineContent` template component that renders only the timeline content without the full page layout
 - Updated the event handler to detect HTMX requests and render only the content portion
 - This improves performance and provides a smoother user experience by avoiding unnecessary DOM updates 
+
+## Modal Closing Enhancement
+
+Improved modal handling in the application:
+
+- Enhanced the modal closing mechanism to ensure modals are properly closed after form submission
+- Added a global closeModal function in app.js for consistent modal handling
+- Implemented a global HTMX event listener to automatically close modals after successful form submissions
+- Added fallback mechanisms to handle edge cases where modal instances might not be available 
