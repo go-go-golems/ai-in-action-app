@@ -1,0 +1,26 @@
+---
+description: AI in Action App - Coding Standards
+globs: *.go,*.templ,*.html,*.js,*.css
+---
+
+## Go Standards
+
+- Implement interfaces with `var _ Interface = &Foo{}` pattern
+- Always use context arguments when appropriate
+- Use errgroup for managing goroutines
+- Use github.com/pkg/errors for error wrapping
+- Prefer "defaults" package name over "default" (reserved in Go)
+- Use cobra for command-line applications
+
+## Frontend Standards
+
+- Use Bootstrap 5 for styling
+- Implement HTMX for interactive elements
+- Use templ for HTML templating
+- Minimize JavaScript usage where possible
+
+## Version Control
+
+- Use descriptive commit messages with gitmoji
+- Create feature branches for new development
+- Keep commits focused and atomic 

@@ -50,3 +50,38 @@ Improved modal handling in the application:
 - Added a global closeModal function in app.js for consistent modal handling
 - Implemented a global HTMX event listener to automatically close modals after successful form submissions
 - Added fallback mechanisms to handle edge cases where modal instances might not be available 
+
+## Project Documentation with Cursor Rules
+
+Added comprehensive documentation as Cursor rules to improve AI assistance and developer onboarding:
+
+- Created project-overview.mdc with general project information and structure
+- Added tech-stack.mdc detailing the technology stack and development practices
+- Documented feature-ideas.mdc with current and planned features
+- Established coding-standards.mdc with language-specific best practices
+- Created database-guidelines.mdc for data modeling and access patterns
+- Added ui-ux-guidelines.mdc for frontend development standards
+
+These rules provide contextual guidance for AI assistants and developers working with the codebase, ensuring consistent implementation and adherence to project standards.
+
+## Repository Selection with Cobra CLI
+
+Enhanced the application with a command-line interface using Cobra:
+
+- Refactored main.go to use Cobra for command-line argument parsing
+- Added a `--sqlite` flag to switch between mock and SQLite repositories
+- Implemented a `--db-path` flag to specify the SQLite database file location
+- Added a `--port` flag to configure the server port
+- Improved error handling with github.com/pkg/errors for better error context
+
+This change allows users to easily switch between in-memory mock repositories for development and SQLite repositories for production use, making the application more flexible and configurable.
+
+## SQLite Repository Bug Fix
+
+Fixed a type mismatch error in the SQLite note repository:
+
+- Changed the `totalPages` variable from `int` to `int64` to match GORM's `Count()` method expectations
+- Added proper type conversion when assigning the count result back to the domain model
+- This fix resolves a compilation error that occurred when using the SQLite repository implementation
+
+The fix ensures compatibility with GORM's API which expects `*int64` for count operations. 
