@@ -38,7 +38,7 @@ func (r *NoteRepository) GetNote(ctx context.Context, pageNumber int) (domain.No
 	// If no note exists for this page, create an empty one
 	if result.Error == gorm.ErrRecordNotFound {
 		// Get total pages
-		var totalPages int
+		var totalPages int64
 		if err := r.db.WithContext(ctx).Model(&NoteModel{}).Count(&totalPages).Error; err != nil {
 			return domain.Note{}, fmt.Errorf("failed to count total pages: %w", err)
 		}
@@ -46,7 +46,7 @@ func (r *NoteRepository) GetNote(ctx context.Context, pageNumber int) (domain.No
 		// Return an empty note with the correct page number
 		return domain.Note{
 			PageNumber: pageNumber,
-			TotalPages: totalPages,
+			TotalPages: int(totalPages),
 		}, nil
 	} else if result.Error != nil {
 		return domain.Note{}, fmt.Errorf("failed to get note: %w", result.Error)
