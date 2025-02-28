@@ -1,0 +1,12 @@
+package components
+
+// NavItem renders a navigation item with active state
+templ NavItem(label string, href string, isActive bool) {
+	<li class="nav-item">
+		if isActive {
+			<a class="nav-link active" aria-current="page" href={ templ.SafeURL(href) }>{ label }</a>
+		} else {
+			<a class="nav-link" href={ templ.SafeURL(href) }>{ label }</a>
+		}
+	</li>
+} 
