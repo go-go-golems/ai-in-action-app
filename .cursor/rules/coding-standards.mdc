@@ -1,0 +1,50 @@
+---
+description: AI in Action App - Coding Standards
+globs: *.go,*.templ,*.html,*.js,*.css
+---
+
+# Coding Standards
+
+This document outlines the coding standards and best practices for the AI in Action application.
+
+## Go Standards
+
+- Use Go modules for dependency management
+- Follow standard Go formatting (gofmt)
+- Implement interfaces with `var _ Interface = &Foo{}` pattern
+- Always use context arguments when appropriate
+- Use errgroup for managing goroutines
+- Use github.com/pkg/errors for error wrapping
+- Prefer "defaults" package name over "default" (reserved in Go)
+- Use cobra for command-line applications
+- Maintain clear package structure
+
+## Frontend Standards
+
+- Use Bootstrap 5 for styling
+- Implement HTMX for interactive elements
+- Use templ for HTML templating
+- Maintain responsive design for all UI components
+- Minimize JavaScript usage where possible
+- Follow progressive enhancement principles
+
+## Documentation
+
+- Document all exported functions and types
+- Include examples for complex functionality
+- Keep README.md updated with current project status
+- Document changes in changelog.md
+
+## Testing
+
+- Write unit tests for critical functionality
+- Include integration tests for API endpoints
+- Test UI components for responsiveness
+- Ensure accessibility standards are met
+
+## Version Control
+
+- Use descriptive commit messages with gitmoji
+- Create feature branches for new development
+- Review code before merging to main branch
+- Keep commits focused and atomic 
