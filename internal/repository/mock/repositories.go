@@ -1,6 +1,7 @@
 package mock
 
 import (
+	"context"
 	"sync"
 	"time"
 
@@ -70,7 +71,12 @@ func NewMockEventRepository() *MockEventRepository {
 }
 
 // GetUpcomingEvents returns all upcoming events
-func (m *MockEventRepository) GetUpcomingEvents() []domain.Event {
+func (m *MockEventRepository) GetUpcomingEvents(ctx context.Context) ([]domain.Event, error) {
+	// Check if context is done
+	if ctx.Err() != nil {
+		return nil, ctx.Err()
+	}
+
 	m.mu.RLock()
 	defer m.mu.RUnlock()
 
@@ -80,11 +86,16 @@ func (m *MockEventRepository) GetUpcomingEvents() []domain.Event {
 			upcomingEvents = append(upcomingEvents, event)
 		}
 	}
-	return upcomingEvents
+	return upcomingEvents, nil
 }
 
 // GetPastEvents returns all past events
-func (m *MockEventRepository) GetPastEvents() []domain.Event {
+func (m *MockEventRepository) GetPastEvents(ctx context.Context) ([]domain.Event, error) {
+	// Check if context is done
+	if ctx.Err() != nil {
+		return nil, ctx.Err()
+	}
+
 	m.mu.RLock()
 	defer m.mu.RUnlock()
 
@@ -94,32 +105,42 @@ func (m *MockEventRepository) GetPastEvents() []domain.Event {
 			pastEvents = append(pastEvents, event)
 		}
 	}
-	return pastEvents
+	return pastEvents, nil
 }
 
 // AddEvent adds a new event and returns it with an ID
-func (m *MockEventRepository) AddEvent(event domain.Event) domain.Event {
+func (m *MockEventRepository) AddEvent(ctx context.Context, event domain.Event) (domain.Event, error) {
+	// Check if context is done
+	if ctx.Err() != nil {
+		return domain.Event{}, ctx.Err()
+	}
+
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
 	event.ID = m.nextID
 	m.nextID++
 	m.events = append(m.events, event)
-	return event
+	return event, nil
 }
 
 // UpdateEvent updates an existing event
-func (m *MockEventRepository) UpdateEvent(event domain.Event) bool {
+func (m *MockEventRepository) UpdateEvent(ctx context.Context, event domain.Event) (bool, error) {
+	// Check if context is done
+	if ctx.Err() != nil {
+		return false, ctx.Err()
+	}
+
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
 	for i, e := range m.events {
 		if e.ID == event.ID {
 			m.events[i] = event
-			return true
+			return true, nil
 		}
 	}
-	return false
+	return false, nil
 }
 
 // MockTimerRepository implements the TimerRepository interface with in-memory storage
@@ -143,7 +164,12 @@ func NewMockTimerRepository() *MockTimerRepository {
 }
 
 // GetTimer returns the current timer
-func (m *MockTimerRepository) GetTimer() domain.Timer {
+func (m *MockTimerRepository) GetTimer(ctx context.Context) (domain.Timer, error) {
+	// Check if context is done
+	if ctx.Err() != nil {
+		return domain.Timer{}, ctx.Err()
+	}
+
 	m.mu.RLock()
 	defer m.mu.RUnlock()
 
@@ -160,27 +186,37 @@ func (m *MockTimerRepository) GetTimer() domain.Timer {
 		}
 	}
 
-	return m.timer
+	return m.timer, nil
 }
 
 // UpdateTimer updates the timer state
-func (m *MockTimerRepository) UpdateTimer(timer domain.Timer) bool {
+func (m *MockTimerRepository) UpdateTimer(ctx context.Context, timer domain.Timer) (bool, error) {
+	// Check if context is done
+	if ctx.Err() != nil {
+		return false, ctx.Err()
+	}
+
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
 	m.timer = timer
-	return true
+	return true, nil
 }
 
 // ResetTimer resets the timer with a new duration
-func (m *MockTimerRepository) ResetTimer(duration time.Duration) domain.Timer {
+func (m *MockTimerRepository) ResetTimer(ctx context.Context, duration time.Duration) (domain.Timer, error) {
+	// Check if context is done
+	if ctx.Err() != nil {
+		return domain.Timer{}, ctx.Err()
+	}
+
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
 	m.timer.Duration = duration
 	m.timer.RemainingTime = duration
 	m.timer.IsRunning = false
-	return m.timer
+	return m.timer, nil
 }
 
 // MockNoteRepository implements the NoteRepository interface with in-memory storage
@@ -213,28 +249,38 @@ func NewMockNoteRepository() *MockNoteRepository {
 }
 
 // GetNote returns a note for a specific page
-func (m *MockNoteRepository) GetNote(pageNumber int) domain.Note {
+func (m *MockNoteRepository) GetNote(ctx context.Context, pageNumber int) (domain.Note, error) {
+	// Check if context is done
+	if ctx.Err() != nil {
+		return domain.Note{}, ctx.Err()
+	}
+
 	m.mu.RLock()
 	defer m.mu.RUnlock()
 
 	if note, exists := m.notes[pageNumber]; exists {
-		return note
+		return note, nil
 	}
 
 	// Return an empty note with the correct page number if not found
 	return domain.Note{
 		PageNumber: pageNumber,
 		TotalPages: len(m.notes),
-	}
+	}, nil
 }
 
 // SaveNote saves a note
-func (m *MockNoteRepository) SaveNote(note domain.Note) bool {
+func (m *MockNoteRepository) SaveNote(ctx context.Context, note domain.Note) (bool, error) {
+	// Check if context is done
+	if ctx.Err() != nil {
+		return false, ctx.Err()
+	}
+
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
 	m.notes[note.PageNumber] = note
-	return true
+	return true, nil
 }
 
 // MockQuestionRepository implements the QuestionRepository interface with in-memory storage
@@ -255,15 +301,25 @@ func NewMockQuestionRepository() *MockQuestionRepository {
 }
 
 // GetQuestions returns all questions
-func (m *MockQuestionRepository) GetQuestions() []domain.Question {
+func (m *MockQuestionRepository) GetQuestions(ctx context.Context) ([]domain.Question, error) {
+	// Check if context is done
+	if ctx.Err() != nil {
+		return nil, ctx.Err()
+	}
+
 	m.mu.RLock()
 	defer m.mu.RUnlock()
 
-	return m.questions
+	return m.questions, nil
 }
 
 // AddQuestion adds a new question
-func (m *MockQuestionRepository) AddQuestion(question domain.Question) domain.Question {
+func (m *MockQuestionRepository) AddQuestion(ctx context.Context, question domain.Question) (domain.Question, error) {
+	// Check if context is done
+	if ctx.Err() != nil {
+		return domain.Question{}, ctx.Err()
+	}
+
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
@@ -272,19 +328,24 @@ func (m *MockQuestionRepository) AddQuestion(question domain.Question) domain.Qu
 	question.Answered = false
 	m.nextID++
 	m.questions = append(m.questions, question)
-	return question
+	return question, nil
 }
 
 // MarkAsAnswered marks a question as answered
-func (m *MockQuestionRepository) MarkAsAnswered(id uint) bool {
+func (m *MockQuestionRepository) MarkAsAnswered(ctx context.Context, id uint) (bool, error) {
+	// Check if context is done
+	if ctx.Err() != nil {
+		return false, ctx.Err()
+	}
+
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
 	for i, q := range m.questions {
 		if q.ID == id {
 			m.questions[i].Answered = true
-			return true
+			return true, nil
 		}
 	}
-	return false
+	return false, nil
 }
