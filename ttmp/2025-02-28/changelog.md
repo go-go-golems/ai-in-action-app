@@ -32,4 +32,12 @@ Enhanced the repository pattern implementation with context.Context support:
 3. Implemented context cancellation checks in all repository methods
 4. Updated the main.go file to use context with timeout for all repository calls
 
-This change follows Go best practices for context propagation and cancellation support, making the codebase more robust for handling timeouts and cancellations. 
+This change follows Go best practices for context propagation and cancellation support, making the codebase more robust for handling timeouts and cancellations.
+
+## HTMX Partial Updates Optimization
+
+Optimized HTMX updates to only refresh the content area without reloading the navbar:
+
+- Created a new `TimelineContent` template component that renders only the timeline content without the full page layout
+- Updated the event handler to detect HTMX requests and render only the content portion
+- This improves performance and provides a smoother user experience by avoiding unnecessary DOM updates 
