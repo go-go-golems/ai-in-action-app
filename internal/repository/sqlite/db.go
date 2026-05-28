@@ -2,7 +2,6 @@ package sqlite
 
 import (
 	"fmt"
-	"log"
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -42,7 +41,7 @@ func NewDBManager(dbPath string) (*DBManager, error) {
 
 // Migrate automatically migrates the database schema
 func (m *DBManager) Migrate() error {
-	log.Println("Migrating database schema...")
+	log.Info().Msg("migrating database schema")
 
 	// Auto migrate all models
 	err := m.db.AutoMigrate(
@@ -55,7 +54,7 @@ func (m *DBManager) Migrate() error {
 		return fmt.Errorf("auto migration failed: %w", err)
 	}
 
-	log.Println("Database migration completed successfully")
+	log.Info().Msg("database migration completed successfully")
 	return nil
 }
 
