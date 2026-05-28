@@ -1,0 +1,3 @@
+package aiinactionapp
+
+//go:generate go tool logcopter-gen -area-prefix go-go-golems.ai-in-action-app -strip-prefix github.com/go-go-golems/ai-in-action-app ./cmd/... ./internal/...

@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
 	"os"
 	"os/signal"
 	"syscall"
@@ -57,7 +56,7 @@ func runServer(cmd *cobra.Command, args []string) error {
 
 	// Initialize repositories based on flag
 	if useSQLite {
-		log.Printf("Using SQLite repositories with database: %s\n", dbPath)
+		log.Info().Str("db_path", dbPath).Msg("using SQLite repositories")
 		sqliteFactory, err = sqlite.NewRepositoryFactory(dbPath)
 		if err != nil {
 			return errors.Wrap(err, "failed to initialize SQLite repositories")
@@ -69,7 +68,7 @@ func runServer(cmd *cobra.Command, args []string) error {
 		noteRepo = sqliteFactory.GetNoteRepository()
 		questionRepo = sqliteFactory.GetQuestionRepository()
 	} else {
-		log.Println("Using mock repositories")
+		log.Info().Msg("using mock repositories")
 		eventRepo = mock.NewMockEventRepository()
 		timerRepo = mock.NewMockTimerRepository()
 		noteRepo = mock.NewMockNoteRepository()
@@ -89,11 +88,11 @@ func runServer(cmd *cobra.Command, args []string) error {
 	go func() {
 		serverAddr := fmt.Sprintf(":%d", serverPort)
 		if err := e.Start(serverAddr); err != nil {
-			log.Printf("Server error: %v\n", err)
+			log.Error().Err(err).Msg("server error")
 		}
 	}()
 
-	log.Printf("Server started at http://localhost:%d\n", serverPort)
+	log.Info().Int("port", serverPort).Msg("server started")
 
 	// Wait for interrupt signal to gracefully shut down the server
 	quit := make(chan os.Signal, 1)
